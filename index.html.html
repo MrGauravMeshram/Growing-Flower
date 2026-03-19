@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luxury JS Flower Garden</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  background: radial-gradient(circle at top,#0f172a,#020617);
+  overflow:hidden;
+  font-family:sans-serif;
+}
+
+/* garden */
+.garden{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:420px;
+  display:flex;
+  justify-content:space-evenly;
+  align-items:flex-end;
+}
+
+/* plant */
+.plant{
+  position:relative;
+  width:120px;
+  height:380px;
+}
+
+/* stem */
+.stem{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  width:6px;
+  height:0;
+  transform:translateX(-50%);
+  background:linear-gradient(to top,#14532d,#22c55e);
+  border-radius:10px;
+  animation:growStem 2s ease forwards;
+}
+
+@keyframes growStem{
+  to{height:240px;}
+}
+
+/* leaves */
+.leaf{
+  position:absolute;
+  width:55px;
+  height:28px;
+  background:linear-gradient(135deg,#22c55e,#14532d);
+  border-radius:60px 0;
+  opacity:0;
+  animation:leafGrow .8s ease forwards;
+}
+
+.leaf.left{
+  left:15%;
+  bottom:120px;
+  transform:rotate(-40deg) scale(0);
+}
+.leaf.right{
+  right:15%;
+  bottom:170px;
+  transform:rotate(140deg) scale(0);
+}
+
+@keyframes leafGrow{
+  to{
+    opacity:1;
+    transform:rotate(var(--rot)) scale(1);
+  }
+}
+
+/* flower */
+.flower{
+  position:absolute;
+  top:60px;
+  left:50%;
+  transform:translateX(-50%) scale(0);
+  width:80px;
+  height:80px;
+  animation:bloom 1s ease forwards;
+}
+
+@keyframes bloom{
+  to{transform:translateX(-50%) scale(1);}
+}
+
+/* petals */
+.petal{
+  position:absolute;
+  width:40px;
+  height:60px;
+  border-radius:50%;
+  transform-origin:bottom center;
+}
+
+.petal:nth-child(1){transform:rotate(0deg) translateY(-20px);}
+.petal:nth-child(2){transform:rotate(60deg) translateY(-20px);}
+.petal:nth-child(3){transform:rotate(120deg) translateY(-20px);}
+.petal:nth-child(4){transform:rotate(180deg) translateY(-20px);}
+.petal:nth-child(5){transform:rotate(240deg) translateY(-20px);}
+.petal:nth-child(6){transform:rotate(300deg) translateY(-20px);}
+
+/* center */
+.center{
+ position: absolute;
+    width: 28px;
+    height: 28px;
+    background: radial-gradient(circle, #fde047, #eab308);
+    border-radius: 50%;
+    top: 44px;
+    left: 8px;
+    box-shadow: 0 0 15px #fde047;
+}
+
+/* particles */
+.particle{
+  position:absolute;
+  width:4px;
+  height:4px;
+  background:white;
+  border-radius:50%;
+  opacity:.7;
+  animation:float 6s linear infinite;
+}
+
+@keyframes float{
+  from{transform:translateY(0);opacity:.7;}
+  to{transform:translateY(-600px);opacity:0;}
+}
+
+/* button */
+button{
+  position:absolute;
+  top:30px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:12px 28px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(135deg,#ff4d6d,#c9184a);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
+</style>
+</head>
+
+<body>
+
+<button id="growBtn">Grow Flowers 🌸</button>
+<div class="garden" id="garden"></div>
+
+<script>
+const garden = document.getElementById("garden");
+const colors = [
+  ["#ff9ecf","#e11d74"],
+  ["#a5b4fc","#4f46e5"],
+  ["#fde68a","#f59e0b"],
+  ["#86efac","#16a34a"],
+  ["#fca5a5","#ef4444"]
+];
+
+// create flower
+function createPlant(delay){
+  const plant = document.createElement("div");
+  plant.className = "plant";
+
+  const stem = document.createElement("div");
+  stem.className = "stem";
+  stem.style.animationDelay = delay + "s";
+
+  const leafL = document.createElement("div");
+  leafL.className = "leaf left";
+  leafL.style.setProperty("--rot","-40deg");
+  leafL.style.animationDelay = (delay+1.2) + "s";
+
+  const leafR = document.createElement("div");
+  leafR.className = "leaf right";
+  leafR.style.setProperty("--rot","140deg");
+  leafR.style.animationDelay = (delay+1.4) + "s";
+
+  const flower = document.createElement("div");
+  flower.className = "flower";
+  flower.style.animationDelay = (delay+2) + "s";
+
+  const color = colors[Math.floor(Math.random()*colors.length)];
+
+  for(let i=0;i<6;i++){
+    const p = document.createElement("div");
+    p.className="petal";
+    p.style.background=`radial-gradient(circle at top,${color[0]},${color[1]})`;
+    flower.appendChild(p);
+  }
+
+  const center=document.createElement("div");
+  center.className="center";
+  flower.appendChild(center);
+
+  plant.append(stem,leafL,leafR,flower);
+  garden.appendChild(plant);
+}
+
+// particles
+function createParticles(){
+  for(let i=0;i<25;i++){
+    const p=document.createElement("div");
+    p.className="particle";
+    p.style.left=Math.random()*100+"%";
+    p.style.bottom="-10px";
+    p.style.animationDuration=(4+Math.random()*4)+"s";
+    document.body.appendChild(p);
+  }
+}
+
+// button click
+document.getElementById("growBtn").onclick=()=>{
+  garden.innerHTML="";
+  let count=5;
+  for(let i=0;i<count;i++){
+    createPlant(i*0.6);
+  }
+};
+
+// start particles
+createParticles();
+</script>
+
+</body>
+</html>
